@@ -10,6 +10,10 @@ from dateutil.parser import parse
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 from urllib.parse import urlparse
+import numpy as np
+from sklearn import tree
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
 
     # 1: 정상 / -1 비정상
 def Check_TinyURL(url) :
@@ -150,10 +154,19 @@ def Check_port(url):
 
 
 
+training_data = np.genfromtxt('Training Dataset.arff', delimiter=',', dtype=np.int32)
 
+inputs = training_data[:, :-1]
+outputs = training_data[:, -1]
+training_inputs = inputs[:7000]
+training_outputs = outputs[:7000]
 
+testing_inputs = inputs[7000:]
+testing_outputs = outputs[7000:]
+classifier = tree.DecisionTreeClassifier()
 
+classifier.fit(training_inputs, training_outputs)
+predictions = classifier.predict(testing_inputs)
+accuracy = 100.0 * accuracy_score(testing_outputs, predictions)
 
-
-if __name__ == '__main__':
- print("hi")
+print ("result : " + str(accuracy))
